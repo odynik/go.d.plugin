@@ -1,4 +1,4 @@
-package example
+package suricata
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ var chartTemplate = module.Chart{
 	Title: "A Random Number",
 	Units: "random",
 	Fam:   "random",
-	Ctx:   "example.random",
+	Ctx:   "suricata.random",
 }
 
 var hiddenChartTemplate = module.Chart{
@@ -19,7 +19,7 @@ var hiddenChartTemplate = module.Chart{
 	Title: "A Random Number",
 	Units: "random",
 	Fam:   "random",
-	Ctx:   "example.random",
+	Ctx:   "suricata.random",
 	Opts: module.Opts{
 		Hidden: true,
 	},

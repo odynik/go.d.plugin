@@ -1,11 +1,11 @@
-package example
+package suricata
 
 import (
 	"errors"
 	"github.com/netdata/go.d.plugin/agent/module"
 )
 
-func (e Example) validateConfig() error {
+func (e Suricata) validateConfig() error {
 	if e.Config.Charts.Num <= 0 && e.Config.HiddenCharts.Num <= 0 {
 		return errors.New("'charts->num' or `hidden_charts->num` must be > 0")
 	}
@@ -18,7 +18,7 @@ func (e Example) validateConfig() error {
 	return nil
 }
 
-func (e Example) initCharts() (*module.Charts, error) {
+func (e Suricata) initCharts() (*module.Charts, error) {
 	charts := &module.Charts{}
 
 	for i := 0; i < e.Config.Charts.Num; i++ {

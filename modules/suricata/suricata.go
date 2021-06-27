@@ -1,4 +1,4 @@
-package example
+package suricata
 
 import (
 	"math/rand"
@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	module.Register("example", module.Creator{
+	module.Register("suricata", module.Creator{
 		Defaults: module.Defaults{
 			UpdateEvery:        module.UpdateEvery,
 			AutoDetectionRetry: module.AutoDetectionRetry,
@@ -18,8 +18,8 @@ func init() {
 	})
 }
 
-func New() *Example {
-	return &Example{
+func New() *Suricata {
+	return &Suricata{
 		Config: Config{
 			Charts: ConfigCharts{
 				Num:  1,
@@ -48,7 +48,7 @@ type (
 	}
 )
 
-type Example struct {
+type Suricata struct {
 	module.Base // should be embedded by every module
 	Config      `yaml:",inline"`
 
@@ -57,7 +57,7 @@ type Example struct {
 	collectedDims map[string]bool
 }
 
-func (e *Example) Init() bool {
+func (e *Suricata) Init() bool {
 	err := e.validateConfig()
 	if err != nil {
 		e.Errorf("config validation: %v", err)
@@ -73,15 +73,15 @@ func (e *Example) Init() bool {
 	return true
 }
 
-func (e *Example) Check() bool {
+func (e *Suricata) Check() bool {
 	return len(e.Collect()) > 0
 }
 
-func (e *Example) Charts() *module.Charts {
+func (e *Suricata) Charts() *module.Charts {
 	return e.charts
 }
 
-func (e *Example) Collect() map[string]int64 {
+func (e *Suricata) Collect() map[string]int64 {
 	mx, err := e.collect()
 	if err != nil {
 		e.Error(err)
@@ -93,4 +93,4 @@ func (e *Example) Collect() map[string]int64 {
 	return mx
 }
 
-func (Example) Cleanup() {}
+func (Suricata) Cleanup() {}

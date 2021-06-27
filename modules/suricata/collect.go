@@ -1,4 +1,4 @@
-package example
+package suricata
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/netdata/go.d.plugin/agent/module"
 )
 
-func (e *Example) collect() (map[string]int64, error) {
+func (e *Suricata) collect() (map[string]int64, error) {
 	collected := make(map[string]int64)
 
 	for _, chart := range *e.Charts() {
@@ -15,7 +15,7 @@ func (e *Example) collect() (map[string]int64, error) {
 	return collected, nil
 }
 
-func (e *Example) collectChart(collected map[string]int64, chart *module.Chart) {
+func (e *Suricata) collectChart(collected map[string]int64, chart *module.Chart) {
 	var num int
 	if chart.Opts.Hidden {
 		num = e.Config.HiddenCharts.Dims

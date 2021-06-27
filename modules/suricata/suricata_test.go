@@ -1,4 +1,4 @@
-package example
+package suricata
 
 import (
 	"testing"
@@ -10,10 +10,10 @@ import (
 func TestNew(t *testing.T) {
 	// We want to ensure that module is a reference type, nothing more.
 
-	assert.IsType(t, (*Example)(nil), New())
+	assert.IsType(t, (*Suricata)(nil), New())
 }
 
-func TestExample_Init(t *testing.T) {
+func TestSuricata_Init(t *testing.T) {
 	// 'Init() bool' initializes the module with an appropriate config, so to test it we need:
 	// - provide the config.
 	// - set module.Config field with the config.
@@ -90,19 +90,19 @@ func TestExample_Init(t *testing.T) {
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			example := New()
-			example.Config = test.config
+			suricata := New()
+			suricata.Config = test.config
 
 			if test.wantFail {
-				assert.False(t, example.Init())
+				assert.False(t, suricata.Init())
 			} else {
-				assert.True(t, example.Init())
+				assert.True(t, suricata.Init())
 			}
 		})
 	}
 }
 
-func TestExample_Check(t *testing.T) {
+func TestSuricata_Check(t *testing.T) {
 	// 'Check() bool' reports whether the module is able to collect any data, so to test it we need:
 	// - provide the module with a specific config.
 	// - initialize the module (call Init()).
@@ -110,74 +110,74 @@ func TestExample_Check(t *testing.T) {
 
 	// 'test' map contains different test cases.
 	tests := map[string]struct {
-		prepare  func() *Example
+		prepare  func() *Suricata
 		wantFail bool
 	}{
-		"success on default":                            {prepare: prepareExampleDefault},
-		"success when only 'charts' set":                {prepare: prepareExampleOnlyCharts},
-		"success when only 'hidden_charts' set":         {prepare: prepareExampleOnlyHiddenCharts},
-		"success when 'charts' and 'hidden_charts' set": {prepare: prepareExampleChartsAndHiddenCharts},
+		"success on default":                            {prepare: prepareSuricataDefault},
+		"success when only 'charts' set":                {prepare: prepareSuricataOnlyCharts},
+		"success when only 'hidden_charts' set":         {prepare: prepareSuricataOnlyHiddenCharts},
+		"success when 'charts' and 'hidden_charts' set": {prepare: prepareSuricataChartsAndHiddenCharts},
 	}
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			example := test.prepare()
-			require.True(t, example.Init())
+			suricata := test.prepare()
+			require.True(t, suricata.Init())
 
 			if test.wantFail {
-				assert.False(t, example.Check())
+				assert.False(t, suricata.Check())
 			} else {
-				assert.True(t, example.Check())
+				assert.True(t, suricata.Check())
 			}
 		})
 	}
 }
 
-func TestExample_Charts(t *testing.T) {
+func TestSuricata_Charts(t *testing.T) {
 	// We want to ensure that initialized module does not return 'nil'.
 	// If it is not 'nil' we are ok.
 
 	// 'test' map contains different test cases.
 	tests := map[string]struct {
-		prepare func(t *testing.T) *Example
+		prepare func(t *testing.T) *Suricata
 		wantNil bool
 	}{
 		"not initialized collector": {
 			wantNil: true,
-			prepare: func(t *testing.T) *Example {
+			prepare: func(t *testing.T) *Suricata {
 				return New()
 			},
 		},
 		"initialized collector": {
-			prepare: func(t *testing.T) *Example {
-				example := New()
-				require.True(t, example.Init())
-				return example
+			prepare: func(t *testing.T) *Suricata {
+				suricata := New()
+				require.True(t, suricata.Init())
+				return suricata
 			},
 		},
 	}
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			example := test.prepare(t)
+			suricata := test.prepare(t)
 
 			if test.wantNil {
-				assert.Nil(t, example.Charts())
+				assert.Nil(t, suricata.Charts())
 			} else {
-				assert.NotNil(t, example.Charts())
+				assert.NotNil(t, suricata.Charts())
 			}
 		})
 	}
 }
 
-func TestExample_Cleanup(t *testing.T) {
+func TestSuricata_Cleanup(t *testing.T) {
 	// Since this module has nothing to clean up,
 	// we want just to ensure that Cleanup() not panics.
 
 	assert.NotPanics(t, New().Cleanup)
 }
 
-func TestExample_Collect(t *testing.T) {
+func TestSuricata_Collect(t *testing.T) {
 	// 'Collect() map[string]int64' returns collected data, so to test it we need:
 	// - provide the module with a specific config.
 	// - initialize the module (call Init()).
@@ -185,11 +185,11 @@ func TestExample_Collect(t *testing.T) {
 
 	// 'test' map contains different test cases.
 	tests := map[string]struct {
-		prepare       func() *Example
+		prepare       func() *Suricata
 		wantCollected map[string]int64
 	}{
 		"default config": {
-			prepare: prepareExampleDefault,
+			prepare: prepareSuricataDefault,
 			wantCollected: map[string]int64{
 				"random_0_random0": 1,
 				"random_0_random1": -1,
@@ -198,7 +198,7 @@ func TestExample_Collect(t *testing.T) {
 			},
 		},
 		"only 'charts' set": {
-			prepare: prepareExampleOnlyCharts,
+			prepare: prepareSuricataOnlyCharts,
 			wantCollected: map[string]int64{
 				"random_0_random0": 1,
 				"random_0_random1": -1,
@@ -213,7 +213,7 @@ func TestExample_Collect(t *testing.T) {
 			},
 		},
 		"only 'hidden_charts' set": {
-			prepare: prepareExampleOnlyHiddenCharts,
+			prepare: prepareSuricataOnlyHiddenCharts,
 			wantCollected: map[string]int64{
 				"hidden_random_0_random0": 1,
 				"hidden_random_0_random1": -1,
@@ -228,7 +228,7 @@ func TestExample_Collect(t *testing.T) {
 			},
 		},
 		"'charts' and 'hidden_charts' set": {
-			prepare: prepareExampleChartsAndHiddenCharts,
+			prepare: prepareSuricataChartsAndHiddenCharts,
 			wantCollected: map[string]int64{
 				"hidden_random_0_random0": 1,
 				"hidden_random_0_random1": -1,
@@ -256,18 +256,18 @@ func TestExample_Collect(t *testing.T) {
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			example := test.prepare()
-			require.True(t, example.Init())
+			suricata := test.prepare()
+			require.True(t, suricata.Init())
 
-			collected := example.Collect()
+			collected := suricata.Collect()
 
 			assert.Equal(t, test.wantCollected, collected)
-			ensureCollectedHasAllChartsDimsVarsIDs(t, example, collected)
+			ensureCollectedHasAllChartsDimsVarsIDs(t, suricata, collected)
 		})
 	}
 }
 
-func ensureCollectedHasAllChartsDimsVarsIDs(t *testing.T, e *Example, collected map[string]int64) {
+func ensureCollectedHasAllChartsDimsVarsIDs(t *testing.T, e *Suricata, collected map[string]int64) {
 	for _, chart := range *e.Charts() {
 		if chart.Obsolete {
 			continue
@@ -285,12 +285,12 @@ func ensureCollectedHasAllChartsDimsVarsIDs(t *testing.T, e *Example, collected 
 	}
 }
 
-func prepareExampleDefault() *Example {
-	return prepareExample(New().Config)
+func prepareSuricataDefault() *Suricata {
+	return prepareSuricata(New().Config)
 }
 
-func prepareExampleOnlyCharts() *Example {
-	return prepareExample(Config{
+func prepareSuricataOnlyCharts() *Suricata {
+	return prepareSuricata(Config{
 		Charts: ConfigCharts{
 			Num:  2,
 			Dims: 5,
@@ -298,8 +298,8 @@ func prepareExampleOnlyCharts() *Example {
 	})
 }
 
-func prepareExampleOnlyHiddenCharts() *Example {
-	return prepareExample(Config{
+func prepareSuricataOnlyHiddenCharts() *Suricata {
+	return prepareSuricata(Config{
 		HiddenCharts: ConfigCharts{
 			Num:  2,
 			Dims: 5,
@@ -307,8 +307,8 @@ func prepareExampleOnlyHiddenCharts() *Example {
 	})
 }
 
-func prepareExampleChartsAndHiddenCharts() *Example {
-	return prepareExample(Config{
+func prepareSuricataChartsAndHiddenCharts() *Suricata {
+	return prepareSuricata(Config{
 		Charts: ConfigCharts{
 			Num:  2,
 			Dims: 5,
@@ -320,9 +320,9 @@ func prepareExampleChartsAndHiddenCharts() *Example {
 	})
 }
 
-func prepareExample(cfg Config) *Example {
-	example := New()
-	example.Config = cfg
-	example.randInt = func() int64 { return 1 }
-	return example
+func prepareSuricata(cfg Config) *Suricata {
+	suricata := New()
+	suricata.Config = cfg
+	suricata.randInt = func() int64 { return 1 }
+	return suricata
 }
