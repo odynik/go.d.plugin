@@ -60,4 +60,6 @@ import (
 	_ "github.com/netdata/go.d.plugin/modules/wmi"
 	_ "github.com/netdata/go.d.plugin/modules/x509check"
 	_ "github.com/netdata/go.d.plugin/modules/zookeeper"
+
+	_ "github.com/odynik/go.d.plugin/modules/suricata"
 )
